@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고양이게임</title>
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4109285932062494"
+    crossorigin="anonymous"
+  ></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ── 시작 화면 ── -->
+  <div id="start-screen" class="game-shell">
+    <div class="game-card">
+      <h1 class="card-title">고양이게임</h1>
+      <p class="card-sub">드래그로 합이 10인 하트를 골라 없애세요!</p>
+
+      <!-- 미니 게임보드 미리보기 (5×5) -->
+      <div class="start-preview-grid">
+        <div class="prev-tile"><span>3</span></div>
+        <div class="prev-tile"><span>5</span></div>
+        <div class="prev-tile"><span>2</span></div>
+        <div class="prev-tile"><span>8</span></div>
+        <div class="prev-tile"><span>4</span></div>
+        <div class="prev-tile"><span>7</span></div>
+        <div class="prev-tile selected-ok"><span>1</span></div>
+        <div class="prev-tile selected-ok"><span>2</span></div>
+        <div class="prev-tile selected-ok"><span>7</span></div>
+        <div class="prev-tile"><span>6</span></div>
+        <div class="prev-tile"><span>9</span></div>
+        <div class="prev-tile"><span>4</span></div>
+        <div class="prev-tile"><span>6</span></div>
+        <div class="prev-tile"><span>1</span></div>
+        <div class="prev-tile"><span>3</span></div>
+        <div class="prev-tile"><span>2</span></div>
+        <div class="prev-tile"><span>8</span></div>
+        <div class="prev-tile"><span>5</span></div>
+        <div class="prev-tile"><span>9</span></div>
+        <div class="prev-tile"><span>1</span></div>
+        <div class="prev-tile"><span>4</span></div>
+        <div class="prev-tile"><span>3</span></div>
+        <div class="prev-tile"><span>7</span></div>
+        <div class="prev-tile"><span>6</span></div>
+        <div class="prev-tile"><span>2</span></div>
+      </div>
+
+      <img class="card-cat" src="assets/cat-start.png" alt="귀여운 고양이 캐릭터" />
+
+      <button type="button" id="btn-start" class="btn btn-start">▶ 시작하기</button>
+
+      <div class="card-opts">
+        <label class="toggle-label">
+          <input type="checkbox" id="opt-bgm-start" class="toggle-input" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">♪ BGM</span>
+        </label>
+        <label class="toggle-label">
+          <input type="checkbox" id="opt-dark-start" class="toggle-input" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">🌙 다크</span>
+        </label>
+        <div class="vol-wrap">
+          <input type="range" id="opt-volume-start" class="vol-slider" min="0" max="100" value="55" aria-label="배경음 볼륨" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 게임 화면 ── -->
+  <div id="game-page" class="game-shell" style="display:none">
+    <div class="game-card">
+
+      <!-- 헤더: 타이틀 + 마스코트 -->
+      <div class="card-header">
+        <img class="card-mascot" src="assets/cat-mascot.png" alt="" aria-hidden="true" />
+        <h1 class="card-title">고양이게임</h1>
+      </div>
+
+      <!-- 스탯 바 (타이머 + 점수) -->
+      <div class="card-stats">
+        <div class="stat-block">
+          <span class="stat-label">남은 시간</span>
+          <span class="stat-val time"><em id="time">90</em>초</span>
+        </div>
+        <!-- 타이머 바 -->
+        <div class="timer-bar-outer" title="남은 시간">
+          <div class="timer-bar-inner" id="timer-bar-fill"></div>
+        </div>
+        <div class="stat-block">
+          <span class="stat-label">점수</span>
+          <span class="stat-val"><em id="score">0</em></span>
+        </div>
+      </div>
+
+      <!-- 게임 스테이지 -->
+      <div class="stage">
+        <div
+          id="board"
+          class="board"
+          role="application"
+          aria-label="격자. 드래그해 직사각형으로 선택하세요."
+        ></div>
+        <div id="drag-region" class="drag-region" aria-hidden="true"></div>
+
+        <!-- 게임 오버 오버레이 -->
+        <div id="overlay" class="overlay hidden" aria-hidden="true">
+          <div class="overlay-box">
+            <img class="overlay-cat" src="assets/cat-start.png" alt="" />
+            <h2 class="overlay-title-text">게임 종료!</h2>
+            <p class="overlay-score-label">최종 점수</p>
+            <p class="overlay-score-val"><strong id="final-score">0</strong>점</p>
+            <p class="overlay-cleared">제거 <em id="cleared">0</em>개</p>
+            <div class="overlay-btns">
+              <button type="button" id="btn-restart" class="btn btn-green">다시 시작</button>
+              <button type="button" id="btn-quit" class="btn btn-pink">끝내기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p id="hint" class="hint" role="status" aria-live="polite"></p>
+
+      <!-- 하단 옵션 -->
+      <div class="card-opts">
+        <button type="button" id="btn-reset" class="btn btn-reset">Reset</button>
+        <label class="toggle-label">
+          <input type="checkbox" id="opt-dark" class="toggle-input" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">🌙</span>
+        </label>
+        <label class="toggle-label">
+          <input type="checkbox" id="opt-bgm" class="toggle-input" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">BGM</span>
+        </label>
+        <div class="vol-wrap">
+          <span class="vol-icon" aria-hidden="true">♪</span>
+          <input type="range" id="opt-volume" class="vol-slider" min="0" max="100" value="55" aria-label="배경음 볼륨" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Kakao AdFit 320x50 배너 (항상 DOM에 노출) ── -->
+  <div class="ad-wrap">
+    <ins class="kakao_ad_area" style="display:none;width:100%;"
+      data-ad-unit="DAN-pPZxCrcAZVPl1Rod"
+      data-ad-width="320"
+      data-ad-height="50"></ins>
+  </div>
+
+  <footer class="site-footer">© 2026 NextReality · 대표: 김지훈 · 사업자등록번호: 171-02-03773 · All Rights Reserved</footer>
+
+  <script async type="text/javascript" charset="utf-8" src="https://t1.daumcdn.net/kas/static/ba.min.js"></script>
+  <audio id="bgm-track" loop preload="auto" src="assets/Paws%20%26%20Pixel%20Stars.mp3"></audio>
+  <audio id="match-sfx" preload="auto" src="assets/match-sfx.mp3"></audio>
+  <audio id="clear-sfx" preload="auto" src="assets/clear-sfx.mp3"></audio>
+  <audio id="gameover-sfx" preload="auto" src="assets/gameover-sfx.mp3"></audio>
+  <audio id="wrong-sfx" preload="auto" src="assets/wrong-sfx.mp3"></audio>
+  <script src="game.js"></script>
+</body>
+</html>
