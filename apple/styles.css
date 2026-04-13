@@ -21,7 +21,8 @@ body {
   align-items: center;
   justify-content: center;
   background: url("assets/bg-gingham.png") center center / cover fixed;
-  padding: 1.5rem 1rem;
+  /* 하단 고정 광고(50px대)에 카드·버튼이 가리지 않도록 */
+  padding: 1.5rem 1rem calc(1.5rem + 56px + env(safe-area-inset-bottom, 0px));
   transition: background 0.35s ease;
 }
 
@@ -579,6 +580,12 @@ body.dark-theme .board {
 
 body.dark-theme .hint { color: #70b888; }
 
+body.dark-theme .ad-wrap {
+  background: rgba(18, 30, 42, 0.96);
+  border-top-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+}
+
 body.dark-theme .toggle-track {
   background: rgba(255, 255, 255, 0.1);
 }
@@ -654,13 +661,21 @@ body.dark-theme .prev-tile {
   color: #aaa;
 }
 
-/* ── 광고 영역 ── */
+/* ── 광고 영역 (뷰포트 하단 고정 — 스크롤 없이 노출·심사에 유리) ── */
 .ad-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
   text-align: center;
   min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
